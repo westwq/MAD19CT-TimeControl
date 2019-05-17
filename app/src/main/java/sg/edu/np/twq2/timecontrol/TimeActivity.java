@@ -5,6 +5,7 @@ import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,6 +21,8 @@ public class TimeActivity extends AppCompatActivity {
     ArrayList<String> data = new ArrayList<>();
 
     boolean isP2;
+
+    ArrayAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +40,9 @@ public class TimeActivity extends AppCompatActivity {
         tvPlayer2 = findViewById(R.id.textPlayer2);
         tvPlayer2.setText("" + duration);
 
+        ListView list = findViewById(R.id.list);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data);
+        list.setAdapter(adapter);
 
         startTimer(player1);
     }
@@ -80,10 +86,16 @@ public class TimeActivity extends AppCompatActivity {
     {
         cdt.cancel(); //stop the timer
         isP2 = !isP2;
-        if(isP2)
+        if(isP2) {
+            data.add("Player 1 left " + player1/1000 + " sec");
             startTimer(player2);
-        else
+        }
+        else {
+            data.add("Player 2 left " + player2/1000 + " sec");
             startTimer(player1);
+        }
+
+        adapter.notifyDataSetChanged();
 
     }
 }
