@@ -17,6 +17,7 @@ public class TimeActivity extends AppCompatActivity {
     int player2;
     TextView tvPlayer1;
     TextView tvPlayer2;
+    TextView tvUpdate;
     CountDownTimer cdt;
     ArrayList<String> data = new ArrayList<>();
 
@@ -44,6 +45,7 @@ public class TimeActivity extends AppCompatActivity {
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data);
         list.setAdapter(adapter);
 
+        tvUpdate = tvPlayer1; //for update
         startTimer(player1);
     }
 
@@ -52,12 +54,11 @@ public class TimeActivity extends AppCompatActivity {
         cdt = new CountDownTimer(dur, 1000 ) {
             @Override
             public void onTick(long l) {
+                tvUpdate.setText("" + l / 1000);
                 if(isP2) {
-                    tvPlayer2.setText("" + l / 1000);
                     player2 = (int)l;
                 }
                 else {
-                    tvPlayer1.setText("" + l / 1000);
                     player1 = (int)l;
                 }
             }
@@ -65,14 +66,13 @@ public class TimeActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 String p = "1";
+                tvUpdate.setText("0");
                 if(isP2){
                     player2 = 0;
-                    tvPlayer2.setText("0");
                     p = "2";
                 }
                 else {
                     player1 = 0;
-                    tvPlayer1.setText("0");
                 }
 
                 Toast tt = Toast.makeText(TimeActivity.this, "Player " + p + "'s time runs out", Toast.LENGTH_LONG);
@@ -88,10 +88,12 @@ public class TimeActivity extends AppCompatActivity {
         isP2 = !isP2;
         if(isP2) {
             data.add("Player 1 left " + player1/1000 + " sec");
+            tvUpdate = tvPlayer2;
             startTimer(player2);
         }
         else {
             data.add("Player 2 left " + player2/1000 + " sec");
+            tvUpdate = tvPlayer1;
             startTimer(player1);
         }
 
