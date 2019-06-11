@@ -13,15 +13,13 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 public class TimeActivity extends AppCompatActivity {
-    int player1;
-    int player2;
-    TextView tvPlayer1;
-    TextView tvPlayer2;
-    TextView tvUpdate;
+    int[] timeLeft;
+    TextView[] tv;
+
     CountDownTimer cdt;
     ArrayList<String> data = new ArrayList<>();
 
-    boolean isP2;
+    int i;
 
     ArrayAdapter adapter;
 
@@ -30,23 +28,22 @@ public class TimeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_time);
 
-        Intent i = getIntent();
-        int duration = Integer.parseInt(i.getStringExtra("duration"));
+        Intent intent = getIntent();
+        int duration = Integer.parseInt(intent.getStringExtra("duration"));
 
-        player1 = duration*1000;
-        player2 = duration*1000;
+        timeLeft = new int[]{duration*1000, duration*1000};
 
-        tvPlayer1 = findViewById(R.id.textPlayer1);
-        tvPlayer1.setText("" + duration);
-        tvPlayer2 = findViewById(R.id.textPlayer2);
-        tvPlayer2.setText("" + duration);
+        tv = new TextView[]{findViewById(R.id.textPlayer1), findViewById(R.id.textPlayer2)};
+        for(TextView t:tv)
+        {
+            t.setText("" + duration);
+        }
 
         ListView list = findViewById(R.id.list);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data);
         list.setAdapter(adapter);
 
-        tvUpdate = tvPlayer1; //for update
-        startTimer(player1);
+        startTimer(timeLeft[i]);
     }
 
     private void startTimer(int dur)
@@ -54,28 +51,16 @@ public class TimeActivity extends AppCompatActivity {
         cdt = new CountDownTimer(dur, 1000 ) {
             @Override
             public void onTick(long l) {
-                tvUpdate.setText("" + l / 1000);
-                if(isP2) {
-                    player2 = (int)l;
-                }
-                else {
-                    player1 = (int)l;
-                }
+                tv[i].setText("" + l / 1000);
+                timeLeft[i] = (int)l;
             }
 
             @Override
             public void onFinish() {
-                String p = "1";
-                tvUpdate.setText("0");
-                if(isP2){
-                    player2 = 0;
-                    p = "2";
-                }
-                else {
-                    player1 = 0;
-                }
+                tv[i].setText("0");
+                timeLeft[i] = 0;
 
-                Toast tt = Toast.makeText(TimeActivity.this, "Player " + p + "'s time runs out", Toast.LENGTH_LONG);
+                Toast tt = Toast.makeText(TimeActivity.this, "Player " + (i+1) + "'s time runs out", Toast.LENGTH_LONG);
                 tt.show();
             }
         };
@@ -85,19 +70,10 @@ public class TimeActivity extends AppCompatActivity {
     public void onClick(View v)
     {
         cdt.cancel(); //stop the timer
-        isP2 = !isP2;
-        if(isP2) {
-            data.add("Player 1 left " + player1/1000 + " sec");
-            tvUpdate = tvPlayer2;
-            startTimer(player2);
-        }
-        else {
-            data.add("Player 2 left " + player2/1000 + " sec");
-            tvUpdate = tvPlayer1;
-            startTimer(player1);
-        }
+        data.add("Player " + (i+1) + " left " + timeLeft[i]/1000 + " sec");
+        i++;i%=2;
+        startTimer(timeLeft[i]);
 
         adapter.notifyDataSetChanged();
-
     }
 }
