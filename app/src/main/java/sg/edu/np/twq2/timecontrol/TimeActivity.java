@@ -15,6 +15,7 @@ import java.util.ArrayList;
 public class TimeActivity extends AppCompatActivity {
     int[] timeLeft;
     TextView[] tv;
+    Toast[] tt;
 
     CountDownTimer cdt;
     ArrayList<String> data = new ArrayList<>();
@@ -39,6 +40,11 @@ public class TimeActivity extends AppCompatActivity {
             t.setText("" + duration);
         }
 
+        tt = new Toast[]{
+                Toast.makeText(TimeActivity.this, "Player 1's time runs out", Toast.LENGTH_LONG),
+                Toast.makeText(TimeActivity.this, "Player 2's time runs out", Toast.LENGTH_LONG),
+                };
+
         ListView list = findViewById(R.id.list);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, data);
         list.setAdapter(adapter);
@@ -48,10 +54,10 @@ public class TimeActivity extends AppCompatActivity {
 
     private void startTimer(int dur)
     {
-        cdt = new CountDownTimer(dur, 1000 ) {
+        cdt = new CountDownTimer(dur, 100) {
             @Override
             public void onTick(long l) {
-                tv[i].setText("" + l / 1000);
+                tv[i].setText("" + (l+500)/1000 );
                 timeLeft[i] = (int)l;
             }
 
@@ -60,8 +66,7 @@ public class TimeActivity extends AppCompatActivity {
                 tv[i].setText("0");
                 timeLeft[i] = 0;
 
-                Toast tt = Toast.makeText(TimeActivity.this, "Player " + (i+1) + "'s time runs out", Toast.LENGTH_LONG);
-                tt.show();
+                tt[i].show();
             }
         };
         cdt.start();
